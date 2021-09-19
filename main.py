@@ -11,7 +11,7 @@ config.read("config.ini")
 
 bot = commands.Bot(intents=intents, command_prefix=config.options("prefix"))
 
-@bot.command()
+@bot.command(aliases=["test"])
 async def echo(ctx):
     await ctx.send(ctx.message.content)
 
