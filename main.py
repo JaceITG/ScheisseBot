@@ -11,9 +11,10 @@ config.read('config.ini')
 
 bot = commands.Bot(intents=intents, command_prefix=config['general']['prefix'])
 
+
 @bot.command(aliases=["test"])
-async def echo(ctx):
-    await ctx.send(ctx.message.content)
+async def echo(ctx, *arg):
+    await ctx.send(' '.join(arg))
 
 bot.run(os.getenv('TOKEN'))
 
