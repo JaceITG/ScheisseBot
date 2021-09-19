@@ -6,7 +6,7 @@ from configparser import ConfigParser
 from discord import Intents
 intents = Intents.all()
 
-config = ConfigParser
+config = ConfigParser()
 config.read('config.ini')
 
 bot = commands.Bot(intents=intents, command_prefix=config.options("prefix"))
@@ -15,5 +15,5 @@ bot = commands.Bot(intents=intents, command_prefix=config.options("prefix"))
 async def echo(ctx):
     await ctx.send(ctx.message.content)
 
-bot.run()
+bot.run(os.getenv('TOKEN'))
 
