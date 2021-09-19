@@ -17,7 +17,7 @@ async def echo(ctx, *arg):
     await ctx.send(' '.join(arg) or "echo")
 
 @bot.command()
-@commands.is_owner
+@commands.is_owner()
 async def purge(ctx, amount: typing.Optional[int] = 100):
     await ctx.channel.purge(limit=amount)
 
