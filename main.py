@@ -7,7 +7,7 @@ from discord import Intents
 intents = Intents.all()
 
 config = ConfigParser
-config.read("config.ini")
+config.read('config.ini')
 
 bot = commands.Bot(intents=intents, command_prefix=config.options("prefix"))
 
