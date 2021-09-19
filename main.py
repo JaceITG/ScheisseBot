@@ -9,7 +9,7 @@ intents = Intents.all()
 config = ConfigParser()
 config.read('config.ini')
 
-bot = commands.Bot(intents=intents, command_prefix=config.options("prefix"))
+bot = commands.Bot(intents=intents, command_prefix=config['general']['prefix'])
 
 @bot.command(aliases=["test"])
 async def echo(ctx):
