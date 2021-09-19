@@ -16,5 +16,9 @@ bot = commands.Bot(intents=intents, command_prefix=config['general']['prefix'])
 async def echo(ctx, *arg):
     await ctx.send(' '.join(arg))
 
+@bot.command()
+async def purge(ctx, amount: int):
+    await ctx.channel.purge(limit=amount)
+
 bot.run(os.getenv('TOKEN'))
 
