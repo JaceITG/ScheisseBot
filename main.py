@@ -1,6 +1,8 @@
 import sys, os
 from colour import Color
 
+import util.checks
+
 import discord, typing
 from discord.ext import commands
 from configparser import ConfigParser
@@ -10,7 +12,8 @@ intents = Intents.all()
 
 config = ConfigParser()
 config.read('config.ini')
-PREFIX = config['general']['prefix']
+config = config['general']
+PREFIX = config['prefix']
 
 bot = commands.Bot(intents=intents, command_prefix=PREFIX)
 
@@ -28,6 +31,7 @@ async def purge(ctx, amount: typing.Optional[int] = 100):
 
 ######## SERVER/META ########
 @bot.command(aliases=['rolerequest','request','rr'])
+@util.checks._is_channel(config['rolechan'])
 async def role(ctx, *args):
 
     if len(args)<2:
