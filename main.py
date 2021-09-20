@@ -1,7 +1,7 @@
 import sys, os
 from colour import Color
 
-import util.checks, util.errors
+import util.checks
 
 import discord, typing
 from discord.ext import commands
@@ -54,8 +54,15 @@ async def on_reaction_add(reaction, user):
                 rolename = emb.description[emb.description.find("Name: ")+7:-1]
 
                 print(f"Adding {rolename} ({color}) to {member.display_name}")
-                new_role = await mainserver.create_role(name=rolename, color=color)
-                await member.add_roles(new_role)
+                
+
+                #check if user already has custom role
+                if len(member.roles)>1:
+                    #edit current role
+                    await member.roles[1].edit(name=rolename, color=color)
+                else:
+                    new_role = await mainserver.create_role(name=rolename, color=color)
+                    await member.add_roles(new_role)
                 await message.delete()
 
             elif reaction.emoji == '❌':
@@ -100,7 +107,6 @@ async def role(ctx, *args):
     reqemb.set_footer(text=ctx.author.id)
     reqemb.set_thumbnail(url=ctx.author.avatar_url)
     
-    scheisse = bot.get_user(int(config['adminid']))
     sentemb = await _send(ctx.guild.get_channel(int(config['confirmchan'])), embed=reqemb)
     await sentemb.add_reaction('❌')
     await sentemb.add_reaction('✅')
