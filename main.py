@@ -23,7 +23,8 @@ async def on_ready():
 @bot.command()
 @commands.is_owner()
 async def purge(ctx, amount: typing.Optional[int] = 100):
-    await ctx.channel.purge(limit=amount)
+    deleted = await ctx.channel.purge(limit=amount)
+    print('Purged {0} messages'.format(len(deleted)))
 
 ######## SERVER/META ########
 @bot.command(aliases=['rolerequest','request','rr'])
