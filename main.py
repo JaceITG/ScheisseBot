@@ -24,7 +24,7 @@ async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
 
     global mainserver
-    mainserver = bot.fetch_guild(int(config['mainserver']))
+    mainserver = await bot.fetch_guild(int(config['mainserver']))
 
 @bot.event
 async def on_member_join(member):
@@ -35,33 +35,31 @@ async def on_member_join(member):
 
 @bot.event
 async def on_reaction_add(reaction, user):
-    print(reaction)
     #ignore self
-    if reaction.me:
+    if user.bot:
         return
     
     message = reaction.message
     embeds = message.embeds
 
-    print("processing reaction")
     if embeds:
         emb = embeds[0]
 
         #role request confirmation
-        if message.author.id == bot.user.id and emb.title.startswith("Role request"):
+        if message.channel.id == int(config['confirmchan']) and emb.title.startswith("Role request"):
             if reaction.emoji == '✅':
                 #accept
                 color = emb.color
-                member = mainserver.get_member(int(emb.footer))
+                member = message.guild.get_member(int(emb.footer.text))
                 
                 if not member:
                     #member not found in server; probably left
                     return
 
-                rolename = emb.description[emb.description.find("Name: ")+7]
+                rolename = emb.description[emb.description.find("Name: ")+7:-1]
 
-                print(f"Adding {rolename} ({color}) to {member.displayname}")
-                new_role = mainserver.create_role(name=rolename, color=color)
+                print(f"Adding {rolename} ({color}) to {member.display_name}")
+                new_role = await mainserver.create_role(name=rolename, color=color)
                 await member.add_roles(new_role)
                 await message.delete()
 
@@ -76,6 +74,10 @@ async def on_reaction_add(reaction, user):
 async def purge(ctx, amount: typing.Optional[int] = 100):
     deleted = await ctx.channel.purge(limit=amount)
     print('Purged {0} messages'.format(len(deleted)))
+
+@bot.command()
+async def show_mem(ctx):
+    await _send(ctx, ctx.guild.members)
 
 ######## SERVER/META ########
 @bot.command(aliases=['rolerequest','request','rr'])
@@ -104,7 +106,7 @@ async def role(ctx, *args):
     reqemb.set_thumbnail(url=ctx.author.avatar_url)
     
     scheisse = bot.get_user(int(config['adminid']))
-    sentemb = await _send(scheisse, embed=reqemb)
+    sentemb = await _send(ctx.guild.get_channel(int(config['confirmchan'])), embed=reqemb)
     await sentemb.add_reaction('❌')
     await sentemb.add_reaction('✅')
 
