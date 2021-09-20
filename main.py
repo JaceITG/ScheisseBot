@@ -47,7 +47,7 @@ async def role(ctx, *args):
     role_name = argstr[argstr.find(',')+2:]
 
     if len(role_name)<1:
-        raise util.errors.UsageError()
+        raise util.errors.UsageError
     
     #await ctx.send(f"Color: {color} Role Name: {argstr[argstr.find(',')+2:]}")
 
