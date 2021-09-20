@@ -26,11 +26,6 @@ async def on_ready():
     global mainserver
     mainserver = await bot.fetch_guild(int(config['mainserver']))
 
-@bot.event
-async def on_member_join(member):
-    defrole = mainserver.get_role(config['defaultrole'])
-    await member.add_roles(defrole)
-
 ######## REACTION HANDLING ########
 
 @bot.event
