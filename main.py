@@ -80,19 +80,19 @@ async def show_mem(ctx):
 async def role(ctx, *args):
 
     if len(args)<2:
-        raise util.errors.UsageError        
+        raise commands.errors.BadArgument
     
     argstr = ' '.join(args)
 
     try:
         color = await _parse_to_hex(argstr[0:argstr.find(',')])
     except ValueError:
-        raise util.errors.BadColor
+        raise commands.errors.BadColorArgument
 
     role_name = argstr[argstr.find(',')+2:]
 
     if len(role_name)<1:
-        raise util.errors.UsageError
+        raise commands.errors.BadArgument
     
     #await ctx.send(f"Color: {color} Role Name: {argstr[argstr.find(',')+2:]}")
     reqdesc = 'Color: `{0}`\nName: `{1}`'.format(hex(color),role_name)
@@ -110,9 +110,9 @@ async def role(ctx, *args):
 
 @role.error
 async def role_error(ctx, error):
-    if isinstance(error, util.errors.UsageError):
+    if isinstance(error, commands.errors.BadArgument):
         await _send(ctx, embed=await _err_embed('Usage: {0}role [color], [name]'.format(PREFIX), '{0}role #ff1493, Cool Guy'.format(PREFIX)))
-    elif isinstance(error, util.errors.BadColor):
+    elif isinstance(error, commands.errors.BadColorArgument):
         await _send(ctx, embed=await _err_embed('Invalid color. Must be interpreted color name, RGB value, or hex string starting with #'.format(PREFIX), '{0}role #ff1493, Cool Guy'.format(PREFIX)))
     else:
         print(error)
