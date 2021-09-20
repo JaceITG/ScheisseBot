@@ -55,7 +55,7 @@ async def echo(ctx, *arg):
 
 async def _send(ctx, msg=None, embed=None, file=None):
     try:
-        await ctx.send(content=msg, embed=embed, file=None)
+        await ctx.send(content=msg, embed=embed, file=file)
     except Exception as e:
         print('Error while sending message in {0.channel}: {0}'.format(ctx,e))
 
