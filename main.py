@@ -16,6 +16,7 @@ config = config['general']
 PREFIX = config['prefix']
 
 bot = commands.Bot(intents=intents, command_prefix=PREFIX)
+scheisse = bot.get_user(int(config['adminid']))
 
 @bot.event
 async def on_ready():
@@ -50,6 +51,13 @@ async def role(ctx, *args):
         raise util.errors.UsageError
     
     #await ctx.send(f"Color: {color} Role Name: {argstr[argstr.find(',')+2:]}")
+    reqdesc = 'Color: `{0}`\nName: `{0}'.format(color,role_name)
+    reqemb = discord.Embed(title=f"Role request from {ctx.author.display_name}", description=reqdesc)
+    reqemb.set_thumbnail(url=ctx.author.avatar_url)
+    
+    sentemb = _send(scheisse, embed=reqemb)
+    
+
 
 
 @role.error
@@ -71,7 +79,7 @@ async def echo(ctx, *arg):
 
 async def _send(ctx, msg=None, embed=None, file=None):
     try:
-        await ctx.send(content=msg, embed=embed, file=file)
+        return await ctx.send(content=msg, embed=embed, file=file)
     except Exception as e:
         print('Error while sending message in {0.channel}: {0}'.format(ctx,e))
 
