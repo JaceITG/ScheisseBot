@@ -1,7 +1,7 @@
 import sys, os
 from colour import Color
 
-import util.checks
+import util.checks, util.errors
 
 import discord, typing
 from discord.ext import commands
@@ -35,18 +35,29 @@ async def purge(ctx, amount: typing.Optional[int] = 100):
 async def role(ctx, *args):
 
     if len(args)<2:
-        raise commands.ArgumentParsingError        
+        raise util.errors.UsageError        
     
     argstr = ' '.join(args)
 
-    color = await _parse_to_hex(argstr[0:argstr.find(',')])
+    try:
+        color = await _parse_to_hex(argstr[0:argstr.find(',')])
+    except ValueError:
+        raise util.errors.BadColor
+
+    role_name = argstr[argstr.find(',')+2:]
+
+    if len(role_name)<1:
+        raise util.errors.UsageError()
     
-    await ctx.send(f"Color: {color} Role Name: {argstr[argstr.find(',')+2:]}")
+    #await ctx.send(f"Color: {color} Role Name: {argstr[argstr.find(',')+2:]}")
+
 
 @role.error
 async def role_error(ctx, error):
-    if isinstance(error, commands.ArgumentParsingError):
-        await _send(ctx, embed=await _err_embed('Usage: {0}role [color], [name]'.format(PREFIX), '{0}role ff1493, Cool Guy\nHex colors must start with #'.format(PREFIX)))
+    if isinstance(error, util.errors.UsageError):
+        await _send(ctx, embed=await _err_embed('Usage: {0}role [color], [name]'.format(PREFIX), '{0}role #ff1493, Cool Guy'.format(PREFIX)))
+    elif isinstance(error, util.errors.BadColor):
+        await _send(ctx, embed=await _err_embed('Invalid color. Must be interpreted color name, RGB value, or hex string starting with #'.format(PREFIX), '{0}role #ff1493, Cool Guy'.format(PREFIX)))
     else:
         print(error)
 
