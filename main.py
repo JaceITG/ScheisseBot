@@ -3,6 +3,8 @@ from colour import Color
 
 import util.checks
 
+import music
+
 import discord, typing
 from discord.ext import commands
 from configparser import ConfigParser
@@ -25,6 +27,8 @@ async def on_ready():
 
     global mainserver
     mainserver = await bot.fetch_guild(int(config['mainserver']))
+
+    music.setup(bot)
 
 ######## REACTION HANDLING ########
 
