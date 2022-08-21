@@ -100,21 +100,32 @@ async def role(ctx, *args):
     except ValueError:
         raise commands.errors.BadColorArgument
 
-    role_name = argstr[argstr.find(',')+2:]
+    rolename = argstr[argstr.find(',')+2:]
 
-    if len(role_name)<1:
+    if len(rolename)<1:
         raise commands.errors.BadArgument
     
-    #await ctx.send(f"Color: {color} Role Name: {argstr[argstr.find(',')+2:]}")
-    reqdesc = 'Color: `{0}`\nName: `{1}`'.format(hex(color),role_name)
-    reqemb = discord.Embed(title=f"Role request from {ctx.author.display_name}", description=reqdesc, color=color)
-    reqemb.set_footer(text=ctx.author.id)
-    reqemb.set_thumbnail(url=ctx.author.avatar_url)
-    
-    sentemb = await _send(ctx.guild.get_channel(int(config['confirmchan'])), embed=reqemb)
-    await sentemb.add_reaction('❌')
-    await sentemb.add_reaction('✅')
-
+    if config.getboolean('requireconfirm'):
+        #await ctx.send(f"Color: {color} Role Name: {argstr[argstr.find(',')+2:]}")
+        reqdesc = 'Color: `{0}`\nName: `{1}`'.format(hex(color),rolename)
+        reqemb = discord.Embed(title=f"Role request from {ctx.author.display_name}", description=reqdesc, color=color)
+        reqemb.set_footer(text=ctx.author.id)
+        reqemb.set_thumbnail(url=ctx.author.avatar_url)
+        
+        sentemb = await _send(ctx.guild.get_channel(int(config['confirmchan'])), embed=reqemb)
+        await sentemb.add_reaction('❌')
+        await sentemb.add_reaction('✅')
+    else:
+        #check if user already has custom role
+        member = ctx.author
+        if len(member.roles)>1:
+            #edit current role
+            await member.roles[1].edit(name=rolename, color=color)
+            await ctx.send(None, embed=discord.Embed(description=f"Role edited to {rolename} successfully ✅"))
+        else:
+            new_role = await ctx.guild.create_role(name=rolename, color=color)
+            await member.add_roles(new_role)
+            await ctx.send(None, embed=discord.Embed(description=f"Role {rolename} created successfully ✅"))
 
 
 
