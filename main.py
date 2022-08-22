@@ -78,6 +78,9 @@ async def on_reaction_add(reaction, user):
 @bot.command()
 @commands.is_owner()
 async def purge(ctx, amount: typing.Optional[int] = 100):
+    if amount:
+        amount += 1 #account for new message from command call
+
     deleted = await ctx.channel.purge(limit=amount)
     print('Purged {0} messages'.format(len(deleted)))
 
